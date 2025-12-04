@@ -19,6 +19,7 @@ export const useSinaData = () => {
     const fetchSinaData = () => {
       const script = document.createElement('script');
       script.src = `https://hq.sinajs.cn/list=hf_XAG&_=${Date.now()}`;
+      script.referrerPolicy = 'no-referrer'; // Explicitly set referrer policy for the script
       script.async = true;
 
       script.onload = () => {
