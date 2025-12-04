@@ -1,50 +1,77 @@
-# Silver Trader
+# 📈 Silver Trader (白银交易员)
 
-Real-time Silver (XAG/USD) price monitor with live chart and 5x leverage simulation.
-Designed for both Desktop (Python/Tkinter) and Mobile (Web/React) use.
+**专为白银 (XAG/USD) 投资者打造的极简实时行情监控工具。**
 
-## 📂 Project Structure
+无论你是坐在电脑前，还是躺在床上玩手机，都能随时掌握最新价格。
 
-- **`silver_app.py`**: Python Desktop App (Tkinter). Runs locally or in Docker (headless).
-- **`src/`**: React Web App source code.
-- **`Dockerfile`**: Multi-arch Docker build configuration (uses piwheels for fast ARM builds).
-- **`deploy_ghcr.py`**: Deployment script to pull and run the Docker image on OneCloud/Server.
-- **`.github/workflows/publish.yml`**: CI/CD pipeline to build Docker image for amd64/arm64/armv7.
+## ✨ 主要功能
 
-## 🚀 Deployment (OneCloud / OpenWrt / ARM)
+*   **🚀 实时数据**：直连新浪财经接口，国内网络秒开，无延迟，不需要特殊网络。
+*   **🔴 红涨绿跌**：符合国人习惯的配色（上涨红色，下跌绿色）。
+*   **📱 多端支持**：
+    *   **电脑版**：下载 exe 文件，双击即用。
+    *   **手机版**：部署在玩客云/树莓派上，手机浏览器随时访问。
 
-1. **Push to GitHub**:
-   Committing code to `main` branch triggers the GitHub Action.
-   It builds the Docker image for `linux/amd64`, `linux/arm64`, and `linux/arm/v7`.
+---
 
-2. **Deploy to Device**:
-   Run the deployment script locally to update the container on your device:
-   ```bash
-   python deploy_ghcr.py
-   ```
-   *(Make sure to edit `deploy_ghcr.py` with your device IP and SSH credentials)*
+## 📖 零基础小白使用指南
 
-## 🛠 Local Development
+### 1️⃣ 电脑版 (Windows) - 最简单！
+如果你只想在电脑上看行情，不想折腾代码：
 
-### Python App
+1.  点击本页面右侧的 **[Releases](https://github.com/1williamaoayers/silver-trader/releases)** (发行版)。
+2.  找到最新的版本，点击下载 `SilverTrader.exe` 文件。
+3.  下载后**直接双击运行**即可！
+    *   *注意：如果杀毒软件误报，请选择“允许运行”或“信任此文件”，这是因为个人开发的软件没有购买昂贵的数字签名。*
+
+---
+
+### 2️⃣ 玩客云 / 树莓派 / NAS 用户 (手机看行情)
+如果你有一台装了 Docker 的设备（比如刷了 OpenWrt 的玩客云），想在手机上看行情：
+
+**只需一条命令：**
+
+1.  通过 SSH 连接到你的设备（或者在网页版的终端里）。
+2.  复制下面的命令并回车执行：
+
+```bash
+docker run -d --name silver-trader --restart always -p 8888:80 ghcr.io/1williamaoayers/silver-trader:latest
+```
+
+3.  **如何访问？**
+    *   打开你手机的浏览器。
+    *   输入：`http://你设备的IP:8888`
+    *   例如：`http://192.168.3.99:8888` (请将IP替换为你自己的)
+
+---
+
+## 🛠️ 进阶：开发者指南 (如果你懂代码)
+
+如果你想自己修改代码或编译：
+
+### 📂 项目结构
+- `silver_app.py`: 电脑桌面版源码 (Python/Tkinter)。
+- `src/`: 手机网页版源码 (React + Vite)。
+- `Dockerfile`: 用于构建 Docker 镜像的配置文件。
+
+### 🔧 本地开发 (Python)
 ```bash
 pip install -r requirements.txt
 python silver_app.py
 ```
 
-### Web App
+### 📦 自己打包 EXE
 ```bash
-npm install
-npm run dev
-```
-
-### Build EXE (Windows)
-To create a standalone Windows executable:
-```bash
+# 需要先安装 PyInstaller
+pip install pyinstaller
 pyinstaller SilverTrader.spec
+# 打包好的文件在 dist/ 目录下
 ```
-Output will be in `dist/SilverTrader.exe`.
 
-## 📦 Releases
+### 🐳 Docker 镜像构建
+本项目使用了 GitHub Actions 自动构建多架构镜像 (支持 amd64, arm64, armv7)，推送到 GitHub Packages。
+如果你修改了代码，推送到 GitHub 后会自动触发构建。
 
-The Windows EXE can be downloaded from the [GitHub Releases](https://github.com/YOUR_USERNAME/silver-trader/releases) page.
+---
+
+**完全免费开源，如果觉得好用，请点击右上角的 Star ⭐️ 支持一下！**
