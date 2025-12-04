@@ -1,39 +1,42 @@
-# Silver Trader (XAG/USD) - Real-time Leveraged Tracker
+# Silver Trader (白银/美元 实时交易看板)
 
-A real-time Silver (XAG/USD) trading dashboard built with React, TypeScript, and Vite.
+一个基于 React, TypeScript 和 Vite 构建的白银 (XAG/USD) 实时交易行情应用。
 
-## Features
+## 🌟 功能亮点
 
-- **Real-time Data**: Connects directly to Binance WebSocket API (No API key required).
-- **Interactive Charts**: Powered by TradingView's Lightweight Charts.
-- **5x Leverage Simulation**: Automatically calculates and displays 5x leveraged price changes.
-- **Live Order Book**: Shows real-time Best Bid and Best Ask prices.
-- **PWA Ready**: Installable on Android and iOS devices as a native-like app.
+- **实时行情**: 直接连接币安 (Binance) WebSocket 接口，毫秒级数据更新（无需 API Key，永久免费）。
+- **专业图表**: 集成 TradingView 轻量级图表库 (Lightweight Charts)，支持流畅的交互体验。
+- **5倍杠杆模拟**: 独家功能！自动计算并显示 **5倍杠杆** 下的涨跌幅（例如：市场跌 1%，显示跌 5%）。
+- **实时盘口**: 实时展示最佳买入价 (Bid) 和最佳卖出价 (Ask)。
+- **PWA 支持**: 专为手机设计，可添加到安卓/iOS 主屏幕，体验如同原生 APP。
 
-## Deployment to Cloudflare Pages
+## 🚀 部署到 Cloudflare Pages
 
-This project is ready to be deployed on Cloudflare Pages.
+本项目已配置好，可直接部署：
 
-1. Push this repository to GitHub.
-2. Log in to Cloudflare Dashboard > Pages.
-3. Click **Connect to Git** and select this repository.
-4. Use the following build settings:
-   - **Framework preset**: `Vite`
-   - **Build command**: `npm run build`
-   - **Build output directory**: `dist`
-5. Click **Save and Deploy**.
+1. 将此仓库推送到 GitHub。
+2. 登录 Cloudflare Dashboard > Pages。
+3. 点击 **Connect to Git** 并选择本仓库。
+4. 使用以下构建配置：
+   - **框架预设 (Framework preset)**: `Vite`
+   - **构建命令 (Build command)**: `npm run build`
+   - **输出目录 (Build output directory)**: `dist`
+5. 点击 **Save and Deploy**。
 
-## Local Development
+## 🛠️ 本地开发
 
 ```bash
+# 安装依赖
 npm install
+
+# 启动本地服务器
 npm run dev
 ```
 
-## Tech Stack
+## 📦 技术栈
 
 - React 19
 - TypeScript
 - Vite
-- Lightweight Charts
-- Lucide React (Icons)
+- Lightweight Charts (K线图)
+- Lucide React (图标)
