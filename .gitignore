@@ -1,24 +1,22 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+build/
+dist/
+*.spec
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# Node/Web
+node_modules/
+.env
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# We will manually track the EXE if user insists, but usually it is ignored.
+# !dist/SilverTrader.exe
