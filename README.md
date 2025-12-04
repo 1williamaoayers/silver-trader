@@ -29,19 +29,33 @@
 ### 2️⃣ 玩客云 / 树莓派 / NAS 用户 (手机看行情)
 如果你有一台装了 Docker 的设备（比如刷了 OpenWrt 的玩客云），想在手机上看行情：
 
-**只需一条命令：**
-
-1.  通过 SSH 连接到你的设备（或者在网页版的终端里）。
-2.  复制下面的命令并回车执行：
+#### 🚀 极简部署（一条命令搞定）
+通过 SSH 连接到你的设备，复制下面的命令并回车：
 
 ```bash
 docker run -d --name silver-trader --restart always -p 8888:80 ghcr.io/1williamaoayers/silver-trader:latest
 ```
 
-3.  **如何访问？**
-    *   打开你手机的浏览器。
-    *   输入：`http://你设备的IP:8888`
-    *   例如：`http://192.168.3.99:8888` (请将IP替换为你自己的)
+#### 📂 指定目录部署（可选）
+如果你想把程序文件放在自己指定的目录（例如 `/home/silver`），或者你想以后方便修改配置，可以使用下面的命令：
+
+```bash
+# 1. 创建目录
+mkdir -p /home/silver
+
+# 2. 运行容器（将本地目录映射进去）
+docker run -d \
+  --name silver-trader \
+  --restart always \
+  -p 8888:80 \
+  -v /home/silver:/app/data \
+  ghcr.io/1williamaoayers/silver-trader:latest
+```
+*(注意：`/home/silver` 可以改成你喜欢的任何路径)*
+
+#### 📱 如何访问？
+*   打开手机浏览器，输入：`http://你设备的IP:8888`
+*   例如：`http://192.168.3.99:8888`
 
 ---
 
