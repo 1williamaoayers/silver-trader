@@ -18,9 +18,6 @@ export interface TickerData {
 
 const SYMBOL = 'XAGUSDT';
 const INTERVAL = '1m';
-// Use Binance public data stream (no API key required)
-// Using wss://stream.binance.com:9443/stream is standard
-// Fallback to wss://data-stream.binance.vision if main fails
 const WS_URL_MAIN = `wss://stream.binance.com:9443/stream?streams=${SYMBOL.toLowerCase()}@kline_${INTERVAL}/${SYMBOL.toLowerCase()}@ticker`;
 const WS_URL_FALLBACK = `wss://data-stream.binance.vision/stream?streams=${SYMBOL.toLowerCase()}@kline_${INTERVAL}/${SYMBOL.toLowerCase()}@ticker`;
 
@@ -30,6 +27,15 @@ export const useBinanceData = () => {
   const [ticker, setTicker] = useState<TickerData | null>(null);
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Debug stats
+  const [debugInfo, setDebugInfo] = useState({
+    historyStatus: 'Idle',
+    wsUrl: 'None',
+    msgCount: 0,
+    lastMsgTime: 'Never'
+  });
+
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const useFallbackRef = useRef(false);
@@ -38,8 +44,7 @@ export const useBinanceData = () => {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        // Determine API URL: Use Cloudflare Proxy if on production, else Direct
-        // Note: /api/klines is our Cloudflare Function
+        setDebugInfo(prev => ({ ...prev, historyStatus: 'Fetching...' }));
         const isProduction = import.meta.env.PROD;
         const baseUrl = isProduction ? '/api/klines' : 'https://api.binance.com/api/v3/klines';
         
@@ -52,39 +57,46 @@ export const useBinanceData = () => {
         }
         const data = await response.json();
         
-        // Check if data is an array (Binance API returns array of arrays)
         if (!Array.isArray(data)) {
              throw new Error("Invalid data format received");
         }
 
         const formattedData = data.map((item: any) => ({
-          time: (item[0] / 1000) as Time, // Lightweight charts uses seconds
+          time: (item[0] / 1000) as Time,
           open: parseFloat(item[1]),
           high: parseFloat(item[2]),
           low: parseFloat(item[3]),
           close: parseFloat(item[4]),
         }));
+        
         setCandles(formattedData);
+        
+        // Initialize currentCandle with the last known candle
+        if (formattedData.length > 0) {
+          setCurrentCandle(formattedData[formattedData.length - 1]);
+        }
+
+        setDebugInfo(prev => ({ ...prev, historyStatus: `Success (${formattedData.length} candles)` }));
         setError(null);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching history:', error);
-        // Don't set error here immediately to avoid flashing if WS connects
-        // But if WS also fails, user will see the WS error
+        setDebugInfo(prev => ({ ...prev, historyStatus: `Failed: ${error.message}` }));
+        setError(`History Load Failed: ${error.message}`);
       }
     };
 
     fetchHistory();
   }, []);
 
-  // WebSocket connection with reconnection logic
+  // WebSocket connection
   useEffect(() => {
     const connect = () => {
-      // Close existing connection if any
       if (wsRef.current) {
         wsRef.current.close();
       }
 
       const url = useFallbackRef.current ? WS_URL_FALLBACK : WS_URL_MAIN;
+      setDebugInfo(prev => ({ ...prev, wsUrl: useFallbackRef.current ? 'Fallback' : 'Main' }));
       console.log(`Connecting to Binance WS (${useFallbackRef.current ? 'Fallback' : 'Main'})...`);
       
       const ws = new WebSocket(url);
@@ -94,7 +106,6 @@ export const useBinanceData = () => {
         setConnected(true);
         setError(null);
         console.log('Connected to Binance WS');
-        // Clear any pending reconnection attempts
         if (reconnectTimeoutRef.current) {
           clearTimeout(reconnectTimeoutRef.current);
           reconnectTimeoutRef.current = null;
@@ -103,6 +114,12 @@ export const useBinanceData = () => {
 
       ws.onmessage = (event) => {
         try {
+          setDebugInfo(prev => ({ 
+            ...prev, 
+            msgCount: prev.msgCount + 1, 
+            lastMsgTime: new Date().toLocaleTimeString() 
+          }));
+
           const message = JSON.parse(event.data);
           const { stream, data } = message;
 
@@ -135,11 +152,9 @@ export const useBinanceData = () => {
         setConnected(false);
         console.log('Disconnected from Binance WS', event.code, event.reason);
         
-        // Attempt to reconnect after 3 seconds
         if (!reconnectTimeoutRef.current) {
            reconnectTimeoutRef.current = setTimeout(() => {
              console.log('Attempting to reconnect...');
-             // Toggle fallback URL on reconnection failure
              useFallbackRef.current = !useFallbackRef.current; 
              connect();
            }, 3000);
@@ -165,5 +180,5 @@ export const useBinanceData = () => {
     };
   }, []);
 
-  return { candles, currentCandle, ticker, connected, error };
+  return { candles, currentCandle, ticker, connected, error, debugInfo };
 };
