@@ -4,13 +4,13 @@ import { Header } from './components/Header';
 import './App.css';
 
 function App() {
-  const { candles, currentCandle, ticker, connected } = useBinanceData();
+  const { candles, currentCandle, ticker, connected, error } = useBinanceData();
 
   return (
     <div className="app-container">
       <div className="status-bar">
-        <div className={`status-dot ${connected ? 'connected' : 'disconnected'}`} />
-        {connected ? 'Market Live' : 'Connecting...'}
+        <div className={`status-dot ${connected ? 'connected' : error ? 'error' : 'disconnected'}`} />
+        {error ? error : (connected ? 'Market Live' : 'Connecting...')}
       </div>
       
       <Header ticker={ticker} />
