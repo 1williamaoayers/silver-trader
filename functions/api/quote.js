@@ -9,17 +9,24 @@ export async function onRequest(context) {
       }
     });
 
-    // Sina returns GBK usually, but fetch might decode it as UTF-8 which causes mess.
-    // However, for the numbers (price), ASCII is fine. The name might be garbled but we don't use the name.
-    const text = await response.text();
+    if (!response.ok) {
+      return new Response(`Sina API Error: ${response.status}`, { status: 502 });
+    }
+
+    // Sina returns GBK encoding. We must decode it to UTF-8 here.
+    // Otherwise, the browser receiving this via fetch might get confused or see mojibake.
+    const buffer = await response.arrayBuffer();
+    const decoder = new TextDecoder("gbk");
+    const text = decoder.decode(buffer);
 
     return new Response(text, {
       headers: {
         "Content-Type": "application/javascript; charset=utf-8",
-        "Access-Control-Allow-Origin": "*"
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "no-cache, no-store, must-revalidate"
       }
     });
   } catch (err) {
-    return new Response(`Error fetching data: ${err.message}`, { status: 500 });
+    return new Response(`Worker Error: ${err.message}`, { status: 500 });
   }
 }
