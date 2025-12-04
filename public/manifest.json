@@ -1,0 +1,15 @@
+{
+  "short_name": "SilverTrader",
+  "name": "Silver/USD Real-time Trader",
+  "icons": [
+    {
+      "src": "vite.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#121212",
+  "background_color": "#121212"
+}
