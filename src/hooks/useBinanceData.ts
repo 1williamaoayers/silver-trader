@@ -1,7 +1,8 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
+import { Time } from 'lightweight-charts';
 
 export interface CandleData {
-  time: number;
+  time: Time;
   open: number;
   high: number;
   low: number;
@@ -31,7 +32,7 @@ export const useBinanceData = () => {
         const response = await fetch(`https://api.binance.com/api/v3/klines?symbol=${SYMBOL}&interval=${INTERVAL}&limit=1000`);
         const data = await response.json();
         const formattedData = data.map((item: any) => ({
-          time: item[0] / 1000, // Lightweight charts uses seconds
+          time: (item[0] / 1000) as Time, // Lightweight charts uses seconds
           open: parseFloat(item[1]),
           high: parseFloat(item[2]),
           low: parseFloat(item[3]),
@@ -62,7 +63,7 @@ export const useBinanceData = () => {
       if (stream.includes('kline')) {
         const k = data.k;
         const newCandle = {
-          time: k.t / 1000,
+          time: (k.t / 1000) as Time,
           open: parseFloat(k.o),
           high: parseFloat(k.h),
           low: parseFloat(k.l),

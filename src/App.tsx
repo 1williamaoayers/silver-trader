@@ -1,4 +1,3 @@
-import React from 'react';
 import { useBinanceData } from './hooks/useBinanceData';
 import { Chart } from './components/Chart';
 import { Header } from './components/Header';
